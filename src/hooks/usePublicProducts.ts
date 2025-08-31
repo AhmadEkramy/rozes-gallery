@@ -19,6 +19,10 @@ export interface Product {
   isOffer?: boolean;
   discountPercent?: number;
   inStock: boolean;
+  discount?: {
+    type: 'percentage' | 'fixed';
+    value: number;
+  };
 }
 
 export function usePublicProducts() {

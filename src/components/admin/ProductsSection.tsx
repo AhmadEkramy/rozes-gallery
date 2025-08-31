@@ -66,6 +66,20 @@ export function ProductsSection() {
     }
   }, [isAddDialogOpen]);
 
+  interface DiscountData {
+    type: 'percentage' | 'fixed' | 'none';
+    value: number;
+  }
+
+  interface ProductFormData {
+    title: string;
+    description: string;
+    price: number;
+    stock: number;
+    images: string[];
+    discount?: DiscountData;
+  }
+
   const [formData, setFormData] = useState<ProductFormData>({
     title: "",
     description: "",
@@ -85,12 +99,30 @@ export function ProductsSection() {
 
   const handleAddProduct = async () => {
     try {
-      await addProduct({
-        ...formData,
-        status: formData.stock > 10 ? 'active' : 'low_stock',
+      const productData = {
+        title: formData.title,
+        description: formData.description,
+        price: formData.price,
+        stock: formData.stock,
+        status: formData.stock > 10 ? 'active' as const : 'low_stock' as const,
         image: formData.images[0] || '', // Use the first image as the main image
         images: formData.images, // Save all images
-      });
+      };
+
+      // Only include discount if it exists, has a valid type and positive value
+      if (formData.discount?.type && 
+          formData.discount.type !== 'none' && 
+          formData.discount.value > 0) {
+        const { type, value } = formData.discount;
+        if (type === 'percentage' || type === 'fixed') {
+          productData['discount'] = {
+            type,
+            value
+          };
+        }
+      }
+
+      await addProduct(productData);
       setIsAddDialogOpen(false);
       setFormData({
         title: "",
@@ -124,7 +156,12 @@ export function ProductsSection() {
         price: editProduct.price,
         stock: editProduct.stock,
         images: editProduct.images || [editProduct.image], // Use images array if available, fallback to single image
-        discount: undefined, // Add discount if you have it in your product type
+        discount: editProduct.discount 
+          ? { 
+              type: editProduct.discount.type, 
+              value: editProduct.discount.value 
+            } 
+          : undefined,
       });
     }
   }, [editProduct]);
@@ -519,6 +556,57 @@ export function ProductsSection() {
                 />
               </div>
             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="stock">Stock Quantity</Label>
+                <Input 
+                  id="stock" 
+                  type="number" 
+                  placeholder="0"
+                  value={formData.stock}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div>
+                <Label>Discount (Optional)</Label>
+                <div className="flex gap-2">
+                  <select
+                    className="flex h-9 w-[100px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                    value={formData.discount?.type || "none"}
+                    onChange={(e) => {
+                      const type = e.target.value as "percentage" | "fixed" | "none";
+                      if (type === "none") {
+                        setFormData(prev => ({ ...prev, discount: undefined }));
+                      } else {
+                        setFormData(prev => ({
+                          ...prev,
+                          discount: { type, value: prev.discount?.value || 0 }
+                        }));
+                      }
+                    }}
+                  >
+                    <option value="none">None</option>
+                    <option value="percentage">%</option>
+                    <option value="fixed">$</option>
+                  </select>
+                  <Input 
+                    type="number"
+                    placeholder={formData.discount?.type === "percentage" ? "10%" : "$10"}
+                    value={formData.discount?.value || ""}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value);
+                      if (formData.discount?.type) {
+                        setFormData(prev => ({
+                          ...prev,
+                          discount: { ...prev.discount!, value }
+                        }));
+                      }
+                    }}
+                    disabled={!formData.discount}
+                  />
+                </div>
+              </div>
+            </div>
             <div>
               <Label htmlFor="description">Description</Label>
               <Textarea 
@@ -586,15 +674,30 @@ export function ProductsSection() {
                 onClick={async () => {
                   try {
                     if (editProduct) {
-                      await updateProduct(editProduct.id, {
+                      const updates = {
                         title: formData.title,
                         description: formData.description,
                         price: formData.price,
                         stock: formData.stock,
                         image: formData.images[0] || '', // keep main image for backwards compatibility
                         images: formData.images, // save all images
-                        status: formData.stock > 10 ? 'active' : 'low_stock',
-                      });
+                        status: formData.stock > 10 ? 'active' as const : 'low_stock' as const,
+                      };
+
+                      // Handle discount updates
+                      if (formData.discount?.type && 
+                          formData.discount.type !== 'none' && 
+                          formData.discount.value > 0) {
+                        const { type, value } = formData.discount;
+                        if (type === 'percentage' || type === 'fixed') {
+                          updates['discount'] = { type, value };
+                        }
+                      } else {
+                        // If no discount is set, remove any existing discount
+                        updates['discount'] = null;
+                      }
+
+                      await updateProduct(editProduct.id, updates);
                       setEditProduct(null);
                       toast({
                         title: "Success",

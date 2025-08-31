@@ -13,6 +13,16 @@ interface ProductCardProps {
   product: Product;
 }
 
+const calculateDiscountedPrice = (product: Product): number => {
+  if (!product.discount) return product.price;
+
+  if (product.discount.type === 'percentage') {
+    return product.price * (1 - product.discount.value / 100);
+  } else {
+    return Math.max(0, product.price - product.discount.value);
+  }
+};
+
 const ProductCard = ({ product }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
@@ -23,7 +33,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart(product);
+    const discountedPrice = calculateDiscountedPrice(product);
+    addToCart({
+      ...product,
+      originalPrice: product.price,
+      price: discountedPrice
+    });
     toast({
       title: "Added to Cart",
       description: `${product.title} has been added to your cart.`,
@@ -57,9 +72,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
           
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
-            {product.isOffer && product.discountPercent && (
+            {product.discount && (
               <Badge className="bg-gradient-primary text-white border-0 shadow-glow-primary animate-glow-pulse">
-                -{product.discountPercent}%
+                {product.discount.type === 'percentage' 
+                  ? `-${product.discount.value}%`
+                  : `-$${product.discount.value}`}
               </Badge>
             )}
             {!product.inStock && (
@@ -117,11 +134,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-lg font-bold text-primary">
-                  ${product.price.toFixed(2)}
+                  ${calculateDiscountedPrice(product).toFixed(2)}
                 </span>
-                {product.originalPrice && product.originalPrice > product.price && (
+                {product.discount && (
                   <span className="text-sm text-muted-foreground line-through">
-                    ${product.originalPrice.toFixed(2)}
+                    ${product.price.toFixed(2)}
                   </span>
                 )}
               </div>

@@ -34,6 +34,16 @@ interface ProductType {
   updatedAt?: Date;
 }
 
+const calculateDiscountedPrice = (product: ProductType): number => {
+  if (!product.discount) return product.price;
+
+  if (product.discount.type === 'percentage') {
+    return product.price * (1 - product.discount.value / 100);
+  } else {
+    return Math.max(0, product.price - product.discount.value);
+  }
+};
+
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -108,21 +118,12 @@ const ProductDetail = () => {
   const handleAddToCart = async () => {
     if (!product) return;
 
-    if (!user) {
-      toast({
-        title: "Please sign in",
-        description: "You need to be signed in to add items to cart",
-        variant: "destructive"
-      });
-      navigate('/login');
-      return;
-    }
-
+    const discountedPrice = calculateDiscountedPrice(product);
     addToCart({
       id: product.id,
       title: product.title,
-      price: product.price,
-      originalPrice: product.originalPrice,
+      price: discountedPrice,
+      originalPrice: product.price,
       image: product.images[0] || product.image,
       category: product.category,
       description: product.description,
@@ -255,15 +256,17 @@ const ProductDetail = () => {
               {/* Price */}
               <div className="flex items-center gap-3 mb-6">
                 <span className="text-3xl font-bold text-primary">
-                  ${product.price.toFixed(2)}
+                  ${calculateDiscountedPrice(product).toFixed(2)}
                 </span>
-                {product.originalPrice && (
+                {product.discount && (
                   <>
                     <span className="text-xl text-muted-foreground line-through">
-                      ${product.originalPrice.toFixed(2)}
+                      ${product.price.toFixed(2)}
                     </span>
                     <Badge className="bg-gradient-primary text-white border-0 shadow-glow-primary">
-                      {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
+                      {product.discount.type === 'percentage' 
+                        ? `-${product.discount.value}%`
+                        : `-$${product.discount.value}`}
                     </Badge>
                   </>
                 )}

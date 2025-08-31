@@ -18,6 +18,10 @@ export interface Product {
   image: string; // main image for backwards compatibility
   images: string[]; // array of all images
   status: 'active' | 'inactive' | 'low_stock';
+  discount?: {
+    type: 'percentage' | 'fixed';
+    value: number;
+  };
 }
 
 import { useAuth } from '@/contexts/AuthContext';
