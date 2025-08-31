@@ -527,13 +527,33 @@ const Home = () => {
                   <h3 className="text-2xl font-bold text-foreground mb-6">
                     {t('sendMessage')}
                   </h3>
-                  <form className="space-y-6">
+                  <form className="space-y-6" onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.currentTarget);
+                    const name = formData.get('name') as string;
+                    const email = formData.get('email') as string;
+                    const subject = formData.get('subject') as string;
+                    const message = formData.get('message') as string;
+
+                    // Create WhatsApp message
+                    const whatsappMessage = `*New Contact Form Message*\n\n*Name:* ${name}\n*Email:* ${email}\n*Subject:* ${subject}\n\n*Message:*\n${message}`;
+                    
+                    // WhatsApp phone number from WhatsAppFloat component
+                    const phoneNumber = '01515695312';
+                    
+                    // Create WhatsApp URL with encoded message
+                    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+                    
+                    // Open WhatsApp in a new tab
+                    window.open(whatsappUrl, '_blank');
+                  }}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-medium mb-2 text-foreground">
                           {t('name')} *
                         </label>
                         <input
+                          name="name"
                           type="text"
                           placeholder={t('namePlaceholder')}
                           className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300 bg-background text-foreground"
@@ -545,6 +565,7 @@ const Home = () => {
                           {t('email')} *
                         </label>
                         <input
+                          name="email"
                           type="email"
                           placeholder={t('emailPlaceholder')}
                           className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300 bg-background text-foreground"
@@ -558,6 +579,7 @@ const Home = () => {
                                                   {t('subject')}
                       </label>
                       <input
+                        name="subject"
                         type="text"
                         placeholder={t('subjectPlaceholder')}
                         className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300 bg-background text-foreground"
@@ -569,6 +591,7 @@ const Home = () => {
                         Message *
                       </label>
                       <textarea
+                        name="message"
                         placeholder={t('messagePlaceholder')}
                         rows={6}
                         className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300 resize-none bg-background text-foreground"
