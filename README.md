@@ -1,73 +1,112 @@
-# Welcome to your Lovable project
+# Rozes Gallery - E-commerce Platform
 
-## Project info
+An elegant e-commerce platform for selling flowers and gifts, built with modern web technologies.
 
-**URL**: https://lovable.dev/projects/7173b925-debe-4dbb-b9b0-7947c36788cb
+## Features
 
-## How can I edit this code?
+- **Product Management**: Browse, search, and filter a wide range of floral products
+- **Shopping Cart**: Add items, adjust quantities, and manage your shopping cart
+- **User Authentication**: Secure user accounts and guest checkout options
+- **Order Management**: Track orders and view order history
+- **Admin Dashboard**: Comprehensive admin panel for:
+  - Product management
+  - Order processing
+  - Coupon management
+  - Special offers
+  - Sales analytics
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Frontend**:
+  - React with TypeScript
+  - Vite for build tooling
+  - Tailwind CSS for styling
+  - shadcn/ui for UI components
+  
+- **Backend/Services**:
+  - Firebase Authentication
+  - Firestore Database
+  - Firebase Storage
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7173b925-debe-4dbb-b9b0-7947c36788cb) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js (v16 or higher)
+- npm or yarn package manager
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
+1. Clone the repository:
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+git clone https://github.com/AhmadEkramy/rozes-gallery.git
+cd rozes-gallery
 ```
 
-**Edit a file directly in GitHub**
+2. Install dependencies:
+```sh
+npm install
+# or
+yarn install
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+3. Start the development server:
+```sh
+npm run dev
+# or
+yarn dev
+```
 
-**Use GitHub Codespaces**
+The application will be available at `http://localhost:5173`
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Project Structure
 
-## What technologies are used for this project?
+```
+rozes-gallery/
+├── src/
+│   ├── components/     # Reusable UI components
+│   ├── contexts/       # React context providers
+│   ├── hooks/         # Custom React hooks
+│   ├── lib/           # Utility functions and configurations
+│   ├── pages/         # Page components
+│   └── assets/        # Static assets
+├── public/            # Public static files
+└── types/            # TypeScript type definitions
+```
 
-This project is built with:
+## Features in Detail
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Customer Features
+- Browse products with detailed descriptions
+- Add items to cart
+- Apply discount coupons
+- Guest checkout option
+- Order tracking
+- Responsive design for mobile and desktop
 
-## How can I deploy this project?
+### Admin Features
+- Product management (CRUD operations)
+- Order processing and status updates
+- Coupon creation and management
+- Special offers management
+- Sales and analytics dashboard
+- Customer order history
 
-Simply open [Lovable](https://lovable.dev/projects/7173b925-debe-4dbb-b9b0-7947c36788cb) and click on Share -> Publish.
+## Security
 
-## Can I connect a custom domain to my Lovable project?
+- Firebase Authentication for user management
+- Secure admin access control
+- Protected API routes
+- Data validation and sanitization
 
-Yes, you can!
+## Contributing
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details
